@@ -1,98 +1,42 @@
+
 from tkinter import *
 import random
 
+stats = {'Strength':0, 'Dexterity':0, 'Constitution':0, 'Intelligence':0, 'Wisdom':0, 'Charisma':0} #Dict with the stats and their names
+indexstats = list(stats) #Creates a stats list, used for .index() function
 
 def randomize():
-    resultStrength.configure(state ="normal")
-    resultDexterity.configure(state="normal")
-    resultConstitution.configure(state="normal")
-    resultIntelligence.configure(state="normal")
-    resultWisdom.configure(state="normal")
-    resultCharisma.configure(state="normal")
 
-    if resultStrength.index("end") != 0:
-        resultStrength.delete(0, END)
-    if resultDexterity.index("end") !=0:
-        resultDexterity.delete(0, END)
-    if resultConstitution.index("end") !=0:
-        resultConstitution.delete(0, END)
-    if resultIntelligence.index("end") !=0:
-        resultIntelligence.delete(0, END)
-    if resultWisdom.index("end") !=0:
-        resultWisdom.delete(0, END)
-    if resultCharisma.index("end") !=0:
-        resultCharisma.delete(0, END)
+    for key, value in stats.items():
+        stats[key] = random.randint(1, 20) #Sets each value in the stats dict to a random value
 
-    statStr = random.randint(1, 20)
-    statDex = random.randint(1, 20)
-    statCon = random.randint(1, 20)
-    statInt = random.randint(1, 20)
-    statWis = random.randint(1, 20)
-    statChar = random.randint(1, 20)
+    for statName, statValue in stats.items():
+        currentwidget = root.nametowidget(".mainframe." + statName.lower()) #Gets the entry by searching for it's id, then sets it to a variable
+        currentwidget.configure(state='normal') #Sets the widget state to normal
 
-    resultStrength.insert(0, statStr)
-    resultDexterity.insert(0, statDex)
-    resultConstitution.insert(0, statCon)
-    resultIntelligence.insert(0, statInt)
-    resultWisdom.insert(0, statWis)
-    resultCharisma.insert(0, statChar)
-
-    resultStrength.configure(state="readonly", readonlybackground="white")
-    resultDexterity.configure(state="readonly", readonlybackground="white")
-    resultConstitution.configure(state = "readonly", readonlybackground="white")
-    resultIntelligence.configure(state="readonly", readonlybackground="white")
-    resultWisdom.configure(state="readonly", readonlybackground="white")
-    resultCharisma.configure(state="readonly", readonlybackground="white")
-
-
+        if currentwidget.index('end') != 0: #Checks if any entry is not empty and resets them accordingly
+            currentwidget.delete(0, END)
+        
+        currentwidget.insert(0, stats[statName]) #Inserts the stat value into the entry
+        currentwidget.configure(state="readonly", readonlybackground="white") #Sets entry state to readonly
 
 root = Tk()
 root.title("DnD Rndmzr")
 
 #Frame Stuff
-frame = LabelFrame(root, text="Roll Your Character", padx = 50, pady = 40)
+frame = LabelFrame(root, text="Roll Your Character", padx = 50, pady = 40, name='mainframe')
 frame.grid(padx=10, pady=10)
 
 #Random All
 buttonRandomize = Button(frame, text="Roll", command=lambda: randomize())
 buttonRandomize.grid(row=0, column=0)
 
-#Strength
-labelStrength = Label(frame, text="Strength")
-labelStrength.grid(row=1, column=0)
-resultStrength = Entry(frame, justify = "center")
-resultStrength.grid(row=2, column=0)
-
-#Dexterity
-labelDexterity = Label(frame, text="Dexterity")
-labelDexterity.grid(row=3, column=0)
-resultDexterity = Entry(frame, justify = "center")
-resultDexterity.grid(row=4, column=0)
-
-#Constitution
-labelConstitution = Label(frame, text="Constitution")
-labelConstitution.grid(row=5, column=0)
-resultConstitution = Entry(frame, justify = "center")
-resultConstitution.grid(row=6, column=0)
-
-#Intelligence
-labelIntelligence = Label(frame, text="Intelligence")
-labelIntelligence.grid(row=7, column=0)
-resultIntelligence = Entry(frame, justify = "center")
-resultIntelligence.grid(row=8, column=0)
-
-#Wisdom
-labelWisdom = Label(frame, text="Wisdom")
-labelWisdom.grid(row=9, column=0)
-resultWisdom = Entry(frame, justify = "center")
-resultWisdom.grid(row=10, column=0)
-
-#Charisma
-labelCharisma = Label(frame, text="Charisma")
-labelCharisma.grid(row=11, column=0)
-resultCharisma = Entry(frame, justify = "center")
-resultCharisma.grid(row=12, column=0, )
-
-
+for statName in stats.keys():
+    label = Label(frame, text=statName)
+    labelrow = indexstats.index(statName)*2+1 #Setting the row proportional to the position of the stat name in the list
+    label.grid(row=labelrow, column=0)
+    result = Entry(frame, justify = "center", name=statName.lower()) #Giving each entry field their own id, lowercase required hence .lower() is used
+    result.grid(row=labelrow+1, column=0)
+    
 root.resizable(width=False, height=False)
 root.mainloop()
